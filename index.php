@@ -14,7 +14,7 @@
 
     <?php if (!empty($_SESSION['auth'])): ?>
         <? 'Ваш логин:' . ' ' . $_SESSION['login']; ?>
-        <a class="btn btn--link" href="/changeData.php">Изменить ваши данные</a>
+        <a class="btn btn--link" href="/changeData.php">Изменить данные</a>
         <a class="btn btn--link btn--exit" href="/logout.php">Выйти из аккаунта</a>
     <? else:?>
         <p>Авторизуйтесь или зарегайтесь, пожалуйста! Вам ведь не сложно)</p>

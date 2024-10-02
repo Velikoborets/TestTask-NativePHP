@@ -24,14 +24,14 @@
                 header('Location: index.php'); 
                 die(); 
             } else {
-                echo '<div class="alert alert--error">Проверьте Ваши данные!</div>';
+                echo '<p class="alert alert--error">Проверьте Ваши данные!</p>';
             }
         }
     ?>
     <form class="form" action="" method="POST">
-        <labe class="form-label" for="login">Логин</labe>
+        <labe class="form-label" for="login">логин</labe>
         <input class="form-input" name="login" required>
-        <label  class="form-label" for="password">Пароль</label>
+        <label  class="form-label" for="password">пароль</label>
         <input class="form-input" name="password" type="password" required>
         <button class="btn btn--link" type="submit" onclick="return confirm('Вы уверены?')">Авторизоваться</button>
     </form>
