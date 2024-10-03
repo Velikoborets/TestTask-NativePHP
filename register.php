@@ -6,6 +6,8 @@
         // "Базовые стили"
         echo '<link rel="stylesheet" href="css/style.css">';
 
+        echo '<p>Регистрация</p>';
+
         // При заполненных полях начинаем проверки
         if (!empty($_POST['login']) && !empty($_POST['password']) && !empty($_POST['confirm_password'] 
             && !empty($_POST['email'])) && !empty($_POST['phone'])) {
@@ -66,25 +68,25 @@
             if ($password == $confirm_password) {
                 $validPassword = true;
             } else {
-                echo '<p class="alert alert--error">Пароль не совпадают!</p>';
+                echo '<p class="alert alert--error">Пароли не совпадают!</p>';
             }
             
             // После всех проверок заносим данные в Б\Д
-            if ($validLogin == true && $validPassword == true && $validEmail == true && $validPhone == true) {
+            if ($validLogin && $validPassword && $validEmail && $validPhone) {
 
                 // Переопределим $password перед занесением в БД (занесем с хэшом)
                 $password = password_hash($password, PASSWORD_DEFAULT);
             
                 $queryInsert = "INSERT INTO users SET login='$login', password='$password', email='$email', phone='$phone' ";
                 $db_query_insert = mysqli_query($link, $queryInsert) or die (mysqli_error($link));
+                $id = mysqli_insert_id($link); // Вытаскиваем id user, чтобы работать с его данными
 
+                $_SESSION['id'] = $id;
                 $_SESSION['auth'] = true;
-                $_SESSION['login'] = $login;
-                $_SESSION['message'] = 'Вы зарегистрировались!!';
+                $_SESSION['message'] = 'Вы зарегистрировались!';
                 header('Location: index.php'); 
                 die();
             }
-
         }
     ?>
     <form class="form" action="" method="POST">

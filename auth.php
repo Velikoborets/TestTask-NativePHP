@@ -11,8 +11,10 @@
         // "Базовые стили"
         echo '<link rel="stylesheet" href="css/style.css">';
 
+        echo '<p>Авторизация</p>';
+
         if (!empty($_POST['password']) and (!empty($_POST['phone'])) and (!empty($_POST['captcha']))) {
-        
+
             $input = $_POST['phone']; 
             $password = $_POST['password'];
             $captcha = $_POST['captcha'];
@@ -32,14 +34,16 @@
                 }
 
                 $query = "SELECT * FROM users WHERE email='$email' OR phone='$phone'";
-                $res = mysqli_query($link, $query);
+                $res = mysqli_query($link, $query) or die(mysqli_error($link));
                 $user = mysqli_fetch_assoc($res);
-
+               
                 if (!empty($user)) {
                     $hash = $user['password']; // Вытаскиваем пароль(хэш) юзера из Б\Д
+                    $id = $user['id']; // Вытаскиваем id user, чтобы работать с его данными
 
                     // Проверяем введенный пароль на соответствие паролю(хэшу) в Б/Д
                     if (password_verify($_POST['password'], $hash)) {
+                        $_SESSION['id'] = $id;
                         $_SESSION['auth'] = true;
                         $_SESSION['message']='Вы авторизованы!';
                         header('Location: index.php'); 
@@ -53,7 +57,7 @@
             }
         }
     ?>
-    <form class="form" action="<?php echo $_SERVER['PHP_SELF']; ?>"  method="POST">
+    <form class="form" action="" method="POST">
         <label class="form-label" for="phone">телефон или email</label>
         <input class="form-input" name="phone" required>
         <label  class="form-label" for="password">пароль</label>
