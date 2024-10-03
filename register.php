@@ -10,7 +10,7 @@
         if (!empty($_POST['login']) && !empty($_POST['password']) && !empty($_POST['confirm_password'] 
             && !empty($_POST['email'])) && !empty($_POST['phone'])) {
             
-            // для удобства записываем отпр. значения из формы в переменные
+            // Для удобства записываем отпр. значения из формы в переменные
             $login = $_POST['login'];
             $password = $_POST['password'];
             $confirm_password = $_POST['confirm_password'];
@@ -36,6 +36,7 @@
 
             // Проверка email на корректность + уникальность
             $emailPattern = '/[a-zA-Z0-9\-_]+@[a-z]+\.[a-z]{2,}/';
+
             if (!preg_match($emailPattern, $email)) {
                 echo '<p class="alert alert--error">У вас не корректный email!</p>';
             } else {
@@ -49,7 +50,6 @@
                     echo '<p class="alert alert--error">Email уже занят</p>';
                 }
             }
-
 
             // Проверка телефона на уникальность
             $queryCheckPhone = "SELECT * FROM users WHERE phone='$phone'";
@@ -85,8 +85,6 @@
                 die();
             }
 
-        } else {
-            echo '<p class="alert alert--error">Заполните все поля формы!</p>';
         }
     ?>
     <form class="form" action="" method="POST">

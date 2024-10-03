@@ -3,36 +3,63 @@
         session_start();
         require_once 'connectionDB.php';
 
+        // Генерация CAPTCHA
+        if (empty($_SESSION['captcha'])) {
+            $_SESSION['captcha'] = rand(1000, 9999);
+        }
+
         // "Базовые стили"
         echo '<link rel="stylesheet" href="css/style.css">';
 
-        if (!empty($_POST['password']) and !empty($_POST['login'])) {
-
-            // Записываем данные после отправки формы в переменные
-            $login = $_POST['login'];
+        if (!empty($_POST['password']) and (!empty($_POST['phone'])) and (!empty($_POST['captcha']))) {
+        
+            $input = $_POST['phone']; 
             $password = $_POST['password'];
+            $captcha = $_POST['captcha'];
 
-            // Проверяем отправленные данные на совпадение в Б\Д, рез-тат записываем в $user
-            $query = "SELECT * FROM users WHERE login='$login' AND password='$password'";
-            $res = mysqli_query($link, $query);
-            $user = mysqli_fetch_assoc($res);
-            
-            if (!empty($user)) {
-                $_SESSION['auth'] = true;
-                $_SESSION['login'] = $login;
-                $_SESSION['message']='Вы авторизованы!';
-                header('Location: index.php'); 
-                die(); 
+            // Проверка CAPTCHA
+            if ($captcha != $_SESSION['captcha']) {
+                echo '<p class="alert alert--error">Неправильная CAPTCHA!</p>';
             } else {
-                echo '<p class="alert alert--error">Проверьте Ваши данные!</p>';
+                // Проверка, является ли введенное значение в input телефоном или email
+                $phonePattern = '/^[0-9]+$/';
+                if (preg_match($phonePattern, $input)) {
+                    $phone = $input;
+                    $email = false;
+                } else {
+                    $email = $input;
+                    $phone = false;
+                }
+
+                $query = "SELECT * FROM users WHERE email='$email' OR phone='$phone'";
+                $res = mysqli_query($link, $query);
+                $user = mysqli_fetch_assoc($res);
+
+                if (!empty($user)) {
+                    $hash = $user['password']; // Вытаскиваем пароль(хэш) юзера из Б\Д
+
+                    // Проверяем введенный пароль на соответствие паролю(хэшу) в Б/Д
+                    if (password_verify($_POST['password'], $hash)) {
+                        $_SESSION['auth'] = true;
+                        $_SESSION['message']='Вы авторизованы!';
+                        header('Location: index.php'); 
+                        die();
+                    } else {
+                        echo '<p class="alert alert--error">Неправильный пароль!</p>';
+                    }
+                } else {
+                    echo '<p class="alert alert--error">Неправильный телефон или email!</p>';
+                }
             }
         }
     ?>
-    <form class="form" action="" method="POST">
-        <labe class="form-label" for="login">логин</labe>
-        <input class="form-input" name="login" required>
+    <form class="form" action="<?php echo $_SERVER['PHP_SELF']; ?>"  method="POST">
+        <label class="form-label" for="phone">телефон или email</label>
+        <input class="form-input" name="phone" required>
         <label  class="form-label" for="password">пароль</label>
         <input class="form-input" name="password" type="password" required>
+        <div class="captcha">CAPTCHA: <?php echo $_SESSION['captcha']; ?></div>
+        <input class="form-input" name="captcha" required placeholder="Введите captcha">
         <button class="btn btn--link" type="submit" onclick="return confirm('Вы уверены?')">Авторизоваться</button>
     </form>
 </div>

@@ -13,7 +13,7 @@
     <? endif?>
 
     <?php if (!empty($_SESSION['auth'])): ?>
-        <? 'Ваш логин:' . ' ' . $_SESSION['login']; ?>
+        <p>Вы вошли в аккаунт!</p>
         <a class="btn btn--link" href="/changeData.php">Изменить данные</a>
         <a class="btn btn--link btn--exit" href="/logout.php">Выйти из аккаунта</a>
     <? else:?>
@@ -22,7 +22,5 @@
         <a class="btn btn--link" href="/register.php">Регистарция</a>
     <? endif?>
 </div>
-
-
 
 <? /* Для обновления Авторизации\Регистрации *///    session_destroy(); ?>
